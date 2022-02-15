@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  Dimensions,
 } from 'react-native';
 
 import Input from '../components/Input';
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   button: {
-    width: 100,
+    width: Dimensions.get('window').width / 4,
   },
   input: {
     width: 50,
