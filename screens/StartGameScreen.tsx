@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -26,6 +26,9 @@ const StartGameScreen: React.FC<StartGameScreenProps> = ({onStartGame}) => {
   const [enteredValue, setEnteredValue] = useState<string>('');
   const [confirmed, setConfirmed] = useState<boolean>(false);
   const [selectedNumber, setSelectedNumber] = useState<number>(0);
+  const [buttonWidth, setButtonWidth] = useState<number>(
+    Dimensions.get('window').width / 4,
+  );
 
   const numberInputHandler = (inputText: string) => {
     setEnteredValue(inputText.replace(/[^0-9]/g, ''));
@@ -50,6 +53,14 @@ const StartGameScreen: React.FC<StartGameScreenProps> = ({onStartGame}) => {
     Keyboard.dismiss();
   };
 
+  useEffect(() => {
+    const updateLayout = () => {
+      setButtonWidth(Dimensions.get('window').width / 4);
+    };
+
+    Dimensions.addEventListener('change', updateLayout);
+  }, []);
+
   return (
     <ScrollView>
       <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
@@ -69,14 +80,14 @@ const StartGameScreen: React.FC<StartGameScreenProps> = ({onStartGame}) => {
                 value={enteredValue}
               />
               <View style={styles.buttonContainer}>
-                <View style={styles.button}>
+                <View style={{width: buttonWidth}}>
                   <Button
                     title="Reset"
                     onPress={resetInputHandler}
                     color={colors.accent}
                   />
                 </View>
-                <View style={styles.button}>
+                <View style={{width: buttonWidth}}>
                   <Button
                     title="Confirm"
                     onPress={confirmInputHandler}
@@ -125,9 +136,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-between',
-  },
-  button: {
-    width: Dimensions.get('window').width / 4,
   },
   input: {
     width: 50,
