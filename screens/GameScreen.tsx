@@ -37,6 +37,12 @@ const GameScreen: React.FC<GameScreenProps> = ({userChoice, onGameOver}) => {
     generateRandomBetweens(1, 100, userChoice),
   );
   const [pastGuesses, setPastGuesses] = useState<number[]>([]);
+  const [availableDeviceWidth, setAvailableDeviceWidth] = useState<number>(
+    Dimensions.get('window').width,
+  );
+  const [availableDeviceHeight, setAvailableDeviceHeight] = useState<number>(
+    Dimensions.get('window').height,
+  );
   const currentLow = useRef<number>(1);
   const currentHigh = useRef<number>(100);
 
@@ -65,10 +71,61 @@ const GameScreen: React.FC<GameScreenProps> = ({userChoice, onGameOver}) => {
   };
 
   useEffect(() => {
+    const updateLayout = () => {
+      setAvailableDeviceWidth(Dimensions.get('window').width);
+      setAvailableDeviceHeight(Dimensions.get('window').height);
+    };
+
+    const subscription = Dimensions.addEventListener('change', updateLayout);
+
+    return () => {
+      subscription.remove();
+    };
+  });
+
+  useEffect(() => {
     if (currentGuess === userChoice) {
       onGameOver(pastGuesses.length);
     }
   }, [currentGuess, pastGuesses.length, userChoice, onGameOver, pastGuesses]);
+
+  // Landscape mode
+  if (availableDeviceHeight < 500) {
+    return (
+      <View style={styles.screen}>
+        <Text>Opponent's Guess</Text>
+        <View style={styles.controls}>
+          <View style={styles.button}>
+            <Button
+              title={availableDeviceWidth < 350 ? '(-)' : 'LOWER (-)'}
+              onPress={() => nextGuessHandler('lower')}
+            />
+          </View>
+          <NumberContainer>{currentGuess}</NumberContainer>
+
+          <View style={styles.button}>
+            <Button
+              title={availableDeviceWidth < 350 ? '(+)' : 'GREATER (+)'}
+              onPress={() => nextGuessHandler('greater')}
+            />
+          </View>
+        </View>
+
+        <View style={styles.list}>
+          <FlatList
+            keyExtractor={item => item.toString()}
+            data={pastGuesses}
+            renderItem={({item, index}) => (
+              <View style={styles.listItem}>
+                <Text>#{pastGuesses.length - index}</Text>
+                <Text>{item}</Text>
+              </View>
+            )}
+          />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.screen}>
@@ -77,13 +134,13 @@ const GameScreen: React.FC<GameScreenProps> = ({userChoice, onGameOver}) => {
       <Card style={styles.buttonContainer}>
         <View style={styles.button}>
           <Button
-            title={Dimensions.get('window').width < 350 ? '(-)' : 'LOWER (-)'}
+            title={availableDeviceWidth < 350 ? '(-)' : 'LOWER (-)'}
             onPress={() => nextGuessHandler('lower')}
           />
         </View>
         <View style={styles.button}>
           <Button
-            title={Dimensions.get('window').width < 350 ? '(+)' : 'GREATER (+)'}
+            title={availableDeviceWidth < 350 ? '(+)' : 'GREATER (+)'}
             onPress={() => nextGuessHandler('greater')}
           />
         </View>
@@ -142,5 +199,12 @@ const styles = StyleSheet.create({
   list: {
     width: '80%',
     flex: 1,
+  },
+  // Small and landscape mode
+  controls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    width: '80%',
   },
 });
