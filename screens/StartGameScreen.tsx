@@ -58,7 +58,11 @@ const StartGameScreen: React.FC<StartGameScreenProps> = ({onStartGame}) => {
       setButtonWidth(Dimensions.get('window').width / 4);
     };
 
-    Dimensions.addEventListener('change', updateLayout);
+    const subscription = Dimensions.addEventListener('change', updateLayout);
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   return (
