@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
 
 import MainButton from '../components/MainButton';
 import colors from '../styles/colors';
@@ -51,20 +51,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   imageContainer: {
-    width: 300,
-    height: 300,
-    borderRadius: 150,
+    width: Dimensions.get('window').width * 0.7,
+    height: Dimensions.get('window').width * 0.7,
+    borderRadius: (Dimensions.get('window').width * 0.7) / 2,
     borderWidth: 2,
     borderColor: 'black',
     overflow: 'hidden',
-    marginVertical: 20,
+    marginVertical: Dimensions.get('window').width / 20,
   },
   image: {
     width: '100%',
     height: '100%',
   },
   button: {
-    marginTop: 20,
+    marginTop: Dimensions.get('window').width / 20,
   },
   title: {
     fontSize: 20,
